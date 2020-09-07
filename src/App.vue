@@ -17,29 +17,28 @@ import AddTodo from './components/AddTodo';
 
 export default {
   name: 'App',
-  
+
   components: {
     TodoList,
     AddTodo
   },
   
   methods: {
-    deleteTodo(id) {
-      db.collection('todos').doc(id).delete().then (() => this.todos = this.todos.filter(todo => todo.id !== id));
+    async deleteTodo(id) {
+      await db.collection('todos').doc(id).delete();
+      this.todos = this.todos.filter(todo => todo.id !== id);
     },
 
-    addTodo(title) {
+    async addTodo(title) {
       const newTodo = {
-          title: title,
-          completed: false,
-          dateCreated: new Date(),
-        };
-      db.collection('todos').add(newTodo).then(docRef => {
-        newTodo.id = docRef.id;
-        newTodo.editing = false;
-        this.todos.push(newTodo);
-      });
-      
+        title: title,
+        completed: false,
+        dateCreated: new Date(),
+      };
+      const docRef = await db.collection('todos').add(newTodo)
+      newTodo.id = docRef.id;
+      newTodo.editing = false;
+      this.todos.push(newTodo);
     },
 
     updateTodo(todo) {
@@ -51,20 +50,19 @@ export default {
       db.collection('todos').doc(todo.id).set(updatedTodo);
     },
 
-    getTodos() {
-      db.collection("todos").get().then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          const todo = {
-            id: doc.id,
-            title: doc.data().title,
-            completed: doc.data().completed,
-            dateCreated: doc.data().dateCreated,
-            editing: false
-          }
-          this.todos.push(todo);
-        });
-        this.todos = this.todos.sort((a, b) => a.dateCreated.seconds - b.dateCreated.seconds);
+    async getTodos() {
+      const querySnapshot = await db.collection("todos").get()
+      querySnapshot.forEach(doc => {
+        const todo = {
+          id: doc.id,
+          title: doc.data().title,
+          completed: doc.data().completed,
+          dateCreated: doc.data().dateCreated,
+          editing: false
+        }
+        this.todos.push(todo);
       });
+      this.todos = this.todos.sort((a, b) => a.dateCreated.seconds - b.dateCreated.seconds);
     }
   },
 
