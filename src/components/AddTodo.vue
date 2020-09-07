@@ -1,31 +1,29 @@
 <template>
-<form @submit.prevent="addTodo">
-    <input type="text" name="title" placeholder="add todo..." v-model="inputTitle">
-    <input type="submit" value="Submit" class="btn">
-</form>
-   
+  <form @submit.prevent="add">
+    <input type="text" name="title" placeholder="add todo..." v-model="inputTitle" />
+    <input type="submit" value="Submit" class="btn" />
+  </form>
 </template>
 
 <script>
 export default {
-    name: 'AddTodo',
+  name: "AddTodo",
 
-    data() {
-        return {
-            inputTitle: "",
-        }
-    },
+  data() {
+    return {
+      inputTitle: "",
+    };
+  },
 
-    methods: {
-        addTodo() {
-            this.$emit('add-todo', this.inputTitle);
-            this.inputTitle = '';
-        }
+  methods: {
+    add() {
+      this.$emit("add-todo", this.inputTitle);
+      this.inputTitle = "";
     }
-
-}
+  },
+};
 </script>
 
-<style>
+<style scoped>
 
 </style>
