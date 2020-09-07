@@ -3,7 +3,7 @@
     <input type="checkbox" v-on:changed="setComplete" />
 
     {{todo.title}}
-    <button @click="$emit('del-todo', todo.id)">x</button>
+    <button @click="$emit('delete-todo', todo.id)">x</button>
   </p>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   },
   methods: {
     setComplete() {
-      this.todo.is_completed = !this.todo.is_completed;
+      this.todo.completed = !this.todo.completed;
     },
   },
 };
