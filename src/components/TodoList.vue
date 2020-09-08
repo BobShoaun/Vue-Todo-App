@@ -16,7 +16,7 @@ export default {
   name: "TodoList",
 
   props: {
-    todos: null
+    todos: null,
   },
 
   components: {

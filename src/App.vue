@@ -1,17 +1,23 @@
 <template>
-  <div id="app" class="max-w-md m-auto my-10">
-    <h2 class="text-gray-800 text-center font-bold text-4xl">THINGS TO DO</h2>
-    <div class="my-3 p-6 bg-gray-800 rounded-md shadow-md">
+  <div id="app" class="max-w-lg m-auto my-10">
 
-    <TodoList v-bind:todos="todos" 
-              v-on:delete-todo="deleteTodo"
-              v-on:update-todo="updateTodo"
-              class="mb-5" />
-    <AddTodo v-on:add-todo="addTodo" />
-
+    <h1 class="text-gray-800 text-center font-bold text-5xl">things to do</h1>
+    <div class="my-3 p-8 pb-6 bg-gray-800 rounded shadow-lg">
+      <TodoList v-bind:todos="incompletedTodos" 
+                v-on:delete-todo="deleteTodo"
+                v-on:update-todo="updateTodo"
+                class="mb-3" />
+      <AddTodo v-on:add-todo="addTodo" class="my-4 mb-8"/>
+      <hr>
+      <h4 class="my-2 text-gray-400 italic">marked todos</h4>
+      <TodoList v-bind:todos="completedTodos" 
+                v-on:delete-todo="deleteTodo"
+                v-on:update-todo="updateTodo"
+                class="" />
     </div>
-    
-
+  <p class="text-center text-gray-500 text-xs">
+    &copy;2020 Ng Bob Shoaun. All rights reserved.
+  </p>
   </div>
 </template>
 
@@ -32,6 +38,7 @@ export default {
     async deleteTodo(id) {
       await db.collection('todos').doc(id).delete();
       this.todos = this.todos.filter(todo => todo.id !== id);
+      this.separateTodos();
     },
 
     async addTodo(title) {
@@ -44,6 +51,7 @@ export default {
       newTodo.id = docRef.id;
       newTodo.editing = false;
       this.todos.push(newTodo);
+      this.separateTodos();
     },
 
     updateTodo(todo) {
@@ -53,6 +61,7 @@ export default {
         dateCreated: todo.dateCreated
       }
       db.collection('todos').doc(todo.id).set(updatedTodo);
+      this.separateTodos();
     },
 
     async getTodos() {
@@ -68,11 +77,27 @@ export default {
         this.todos.push(todo);
       });
       this.todos = this.todos.sort((a, b) => a.dateCreated.seconds - b.dateCreated.seconds);
+      this.separateTodos();
+    },
+
+    separateTodos() {
+      this.completedTodos = [];
+      this.incompletedTodos = [];
+      this.todos.forEach(todo => {
+        if (todo.completed)
+          this.completedTodos.push(todo);
+        else
+          this.incompletedTodos.push(todo);
+      });
     }
   },
 
   data() {
-    return { todos: [] };
+    return { 
+      todos: [],
+      completedTodos: [],
+      incompletedTodos: [] 
+    };
   },
 
   created() {
@@ -84,7 +109,8 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
