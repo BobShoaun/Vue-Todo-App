@@ -1,8 +1,9 @@
 <template>
   <form @submit.prevent="add">
-    <input type="text" name="title" placeholder="add todo..." v-model="inputTitle" />
-    <input type="submit" value="Submit" class="btn" />
+    <input class="w-9/12 rounded-sm text-gray-800 border shadow px-2 h-6" type="text" name="title" placeholder="add todo..." v-model="inputTitle" />
+    <input class="w-1/5 rounded-sm float-right text-gray-800 font-bold h-6 border bg-yellow-300 hover:bg-yellow-400" type="submit" value="Add" />
   </form>
+  
 </template>
 
 <script>
@@ -17,6 +18,8 @@ export default {
 
   methods: {
     add() {
+      if (this.inputTitle == "")
+        return;
       this.$emit("add-todo", this.inputTitle);
       this.inputTitle = "";
     }

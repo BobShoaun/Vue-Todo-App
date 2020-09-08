@@ -1,11 +1,16 @@
 <template>
-  <div id="app">
+  <div id="app" class="max-w-md m-auto my-10">
+    <h2 class="text-gray-800 text-center font-bold text-4xl">THINGS TO DO</h2>
+    <div class="my-3 p-6 bg-gray-800 rounded-md shadow-md">
 
-    <h2>Your things to do</h2>
     <TodoList v-bind:todos="todos" 
               v-on:delete-todo="deleteTodo"
-              v-on:update-todo="updateTodo"/>
+              v-on:update-todo="updateTodo"
+              class="mb-5" />
     <AddTodo v-on:add-todo="addTodo" />
+
+    </div>
+    
 
   </div>
 </template>
@@ -83,8 +88,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
-  color: #2c3e50;
-  margin-top: 30px;
-  margin-left: 30px;
+  color: #ffffff;
 }
 </style>
