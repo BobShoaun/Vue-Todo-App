@@ -41,16 +41,16 @@ export default {
       this.separateTodos();
     },
 
-    async addTodo(title) {
+    async addTodo(title, priority) {
       const newTodo = {
-        title: title,
+        title,
         completed: false,
+        priority,
         dateCreated: new Date(),
       };
-      const docRef = await db.collection('todos').add(newTodo)
-      newTodo.id = docRef.id;
-      newTodo.editing = false;
-      this.todos.push(newTodo);
+      const docRef = await db.collection('todos').add(newTodo);
+      const doc = await docRef.get();
+      this.todos.push(this.createTodo(doc));
       this.separateTodos();
     },
 
@@ -58,29 +58,21 @@ export default {
       const updatedTodo = {
         title: todo.title,
         completed: todo.completed,
+        priority: todo.priority,
         dateCreated: todo.dateCreated
       }
-      db.collection('todos').doc(todo.id).set(updatedTodo);
+      db.collection('todos').doc(todo.id).update(updatedTodo);
       this.separateTodos();
     },
 
     async getTodos() {
-      const querySnapshot = await db.collection("todos").get()
-      querySnapshot.forEach(doc => {
-        const todo = {
-          id: doc.id,
-          title: doc.data().title,
-          completed: doc.data().completed,
-          dateCreated: doc.data().dateCreated,
-          editing: false
-        }
-        this.todos.push(todo);
-      });
-      this.todos = this.todos.sort((a, b) => a.dateCreated.seconds - b.dateCreated.seconds);
+      const querySnapshot = await db.collection("todos").get();
+      querySnapshot.forEach(doc => this.todos.push(this.createTodo(doc)));
       this.separateTodos();
     },
 
     separateTodos() {
+      this.todos = this.todos.sort((a, b) => b.priority - a.priority);
       this.completedTodos = [];
       this.incompletedTodos = [];
       this.todos.forEach(todo => {
@@ -89,6 +81,18 @@ export default {
         else
           this.incompletedTodos.push(todo);
       });
+    },
+
+    createTodo(doc) {
+      return {
+        id: doc.id,
+        title: doc.data().title,
+        completed: doc.data().completed,
+        priority: doc.data().priority,
+        dateCreated: doc.data().dateCreated,
+        editingTitle: false,
+        editingPriority: false
+      }
     }
   },
 
