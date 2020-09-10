@@ -1,145 +1,28 @@
 <template>
-  <div id="app" class="max-w-lg m-auto my-10">
-
-    <h1 class="text-gray-800 text-center font-bold text-5xl">things to do:</h1>
-    <div class="my-3 p-8 pb-6 bg-gray-800 rounded shadow-lg">
-      <TodoList v-bind:todos="incompletedTodos" 
-                v-on:delete-todo="deleteTodo"
-                v-on:update-todo="updateTodo"
-                class="mb-3" />
-      <AddTodo v-on:add-todo="addTodo" class="mt-4 mb-8"/>
-      <hr>
-      <h4 class="my-2 text-gray-400 italic">marked as complete</h4>
-      <TodoList v-bind:todos="completedTodos" 
-                v-on:delete-todo="deleteTodo"
-                v-on:update-todo="updateTodo"
-                class="" />
+  <div id="app">
+    <div id="nav" class="px-8 py-5 ">
+      <router-link to="/">home</router-link> |
+      <router-link to="/about">about</router-link>
     </div>
-  <p class="text-center text-gray-500 text-xs">
-    &copy;2020 Ng Bob Shoaun. All rights reserved.
-  </p>
+    <router-view/>
   </div>
 </template>
 
-<script>
-import db from "./firebase.js";
-import TodoList from './components/TodoList';
-import AddTodo from './components/AddTodo';
-
-export default {
-  name: 'App',
-
-  components: {
-    TodoList,
-    AddTodo
-  },
-  
-  methods: {
-
-    async deleteTodo(id) {
-      this.todos = this.todos.filter(todo => todo.id !== id);
-      this.separateTodos();
-      await db.collection('todos').doc(id).delete();
-    },
-
-    async addTodo(title, priority) {
-      const newTodo_client = {
-        id: -1,
-        title,
-        completed: false,
-        priority,
-        dateCreated: new Date(),
-        editingTitle: false,
-        editingPriority: false,
-        allowModify: false,
-      }
-      this.todos.push(newTodo_client); // client only
-      this.separateTodos();
-
-      const newTodo = {
-        title,
-        completed: false,
-        priority,
-        dateCreated: new Date(),
-      };
-      const docRef = await db.collection('todos').add(newTodo);
-      const doc = await docRef.get();
-      this.todos = this.todos.filter(todo => todo.id !== -1);
-      this.todos.push(this.createTodo(doc));
-      this.separateTodos();
-    },
-
-    updateTodo(todo) {
-      if (!todo.allowModify)
-        return;
-      const updatedTodo = {
-        title: todo.title,
-        completed: todo.completed,
-        priority: todo.priority,
-        dateCreated: todo.dateCreated
-      }
-      db.collection('todos').doc(todo.id).update(updatedTodo);
-      this.separateTodos();
-    },
-
-    async getTodos() {
-      try {
-        const querySnapshot = await db.collection("todos").get();
-        querySnapshot.forEach(doc => this.todos.push(this.createTodo(doc)));
-        this.separateTodos();
-      } catch {
-        alert("Problem loading todos!");
-      }
-    },
-
-    separateTodos() {
-      this.todos = this.todos.sort((a, b) => b.priority - a.priority);
-      this.completedTodos = [];
-      this.incompletedTodos = [];
-      this.todos.forEach(todo => {
-        if (todo.completed)
-          this.completedTodos.push(todo);
-        else
-          this.incompletedTodos.push(todo);
-      });
-    },
-
-    createTodo(doc) {
-      return {
-        id: doc.id,
-        title: doc.data().title,
-        completed: doc.data().completed,
-        priority: doc.data().priority,
-        dateCreated: doc.data().dateCreated,
-        editingTitle: false,
-        editingPriority: false,
-        allowModify: true
-      }
-    }
-  },
-
-  data() {
-    return { 
-      todos: [],
-      completedTodos: [],
-      incompletedTodos: [] 
-    };
-  },
-
-  created() {
-    this.getTodos();
-  },
-
-}
-</script>
-
 <style>
 #app {
-  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
   font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #ffffff;
+  @apply text-left;
+  @apply text-white;
+}
+
+#nav a {
+  @apply font-bold;
+  @apply text-gray-700;
+}
+
+#nav a.router-link-exact-active {
+  @apply text-green-500;
 }
 </style>
