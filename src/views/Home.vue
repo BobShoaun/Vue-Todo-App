@@ -9,7 +9,7 @@
                 class="mb-3" />
       <AddTodo v-on:add-todo="addTodo" class="mt-4 mb-8"/>
       <hr>
-      <h4 class="my-2 text-gray-400 italic">marked as complete</h4>
+      <h4 class="my-2 text-gray-400 italic">marked as complete:</h4>
       <TodoList v-bind:todos="completedTodos" 
                 v-on:delete-todo="deleteTodo"
                 v-on:update-todo="updateTodo"

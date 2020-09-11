@@ -6,18 +6,19 @@
     v-model="todo.title" @blur="doneEditTitle" @keyup.enter="doneEditTitle" 
     @keyup.esc="cancelEditTitle" v-focus />
 
-    <div v-else class="col-span-13 h-6" @dblclick="editTitle" 
+    <div v-else class="col-span-13" @dblclick="editTitle" 
          v-bind:class="{'line-through text-gray-600': todo.completed}"> {{todo.title}} </div>
     
-    <input v-if="todo.editingPriority" class="col-span-3 mr-3 px-1 h-6 rounded-sm text-gray-800 border shadow" type="number" 
+    <input v-if="todo.editingPriority" class="col-span-3 mr-3 px-1 rounded-sm text-gray-800 border shadow" type="number" 
     v-model="todo.priority" @blur="doneEditPriority" @keyup.enter="doneEditPriority" 
     @keyup.esc="cancelEditPriority" v-focus />
 
-    <div v-else class="col-span-3 h-6 mr-3 text-right" @dblclick="editPriority" 
+    <div v-else class="col-span-3 mr-3 text-right" @dblclick="editPriority" 
          v-bind:class="{'line-through text-gray-600': todo.completed}">{{todo.priority}}</div>
 
-    <button class="col-span-1 my-auto h-5  rounded text-gray-800 font-bold text-sm" 
-            @click="$emit('delete-todo', todo.id)" v-bind:class="[todo.completed ? 'bg-gray-700 hover:bg-gray-600 ': 'bg-red-400 hover:bg-red-500 ']">x</button>
+    <button class="col-span-1 my-auto rounded text-gray-800 text-sm h-5 w-5" 
+            @click="$emit('delete-todo', todo.id)" v-bind:class="[todo.completed ? 'bg-gray-700 hover:bg-gray-600 ': 'bg-red-400 hover:bg-red-500 ']">
+            <i class="fas fa-times align-middle"></i></button>
     
   </div>
 </template>
